@@ -20,7 +20,7 @@ export const postTeamController = async (req, res) => {
       }),
     );
   } catch (error) {
-    res.statusCode = 400;
+    res.statusCode = 400; 
     res.end(error.message);
   }
 };

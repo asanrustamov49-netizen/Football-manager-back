@@ -14,7 +14,12 @@ export const postTeamService = async (body) => {
   return result.rows[0];
 };
 export const getTeamsService = async () => {
-  const result = await pool.query(`select * from teams`);
+  const result = await pool.query(`
+    select teams.*, count(players) as players_count from teams
+    left join players
+    on teams.id = players.team_id
+    group by teams.id
+  `);
 
   return result.rows;
 };

@@ -3,6 +3,7 @@ import {
   deletePlayerService,
   getOnePlayerService,
   getPlayersService,
+  getPlayersWithTeamService,
   postPlayerService,
   updatePlayerService,
 } from "../services/player.service.js";
@@ -92,3 +93,20 @@ export const updatePlayerController = async (req, res) => {
     res.end(error.message);
   }
 };
+export const getPlayersWithTeamController = async (req, res) => {
+  try {
+    const result = await getPlayersWithTeamService();
+
+    res.statusCode = 200;
+    res.end(
+      JSON.stringify({
+        message: "Players with teams received",
+        data: result,
+      }),
+    );
+  } catch (error) {
+    res.statusCode = 400;
+    res.end(error.message);
+  }
+};
+

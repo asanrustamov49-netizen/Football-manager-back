@@ -57,7 +57,14 @@ export const updatePlayerService = async (id, newBody) => {
         where id = $6
         returning *
         `,
-    [newBody.name, newBody.age, newBody.image, newBody.salary, newBody.team_id, id],
+    [
+      newBody.name,
+      newBody.age,
+      newBody.image,
+      newBody.salary,
+      newBody.team_id,
+      id,
+    ],
   );
 
   if (!result.rows[0]) {
@@ -65,4 +72,14 @@ export const updatePlayerService = async (id, newBody) => {
   }
 
   return result.rows[0];
+};
+export const getPlayersWithTeamService = async () => {
+  const result = await pool.query(
+    `
+    select players.name, players.id, players.image, players.age, players.salary, players.team_id, teams.coach, teams.logo, teams.name as teamname, teams.country from players
+    left join teams on teams.id = players.team_id
+    `,
+  );
+
+  return result.rows;
 };
