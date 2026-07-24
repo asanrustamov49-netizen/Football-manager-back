@@ -6,11 +6,24 @@ import {
   postTeamService,
   updateTeamService,
 } from "../services/team.service.js";
+import { teamSchema } from "../validation/teams.validation.js";
 
 export const postTeamController = async (req, res) => {
   try {
     const body = await bodyParser(req);
-    const result = await postTeamService(body);
+    const validation = teamSchema.safeParse(body);
+
+    if (!validation.success) {
+      res.statusCode = 400;
+      return res.end(
+        JSON.stringify({
+          message: "Validation failed",
+          errors: validation.error.issues,
+        }),
+      );
+    }
+
+    const result = await postTeamService(validation.data);
 
     res.statusCode = 201;
     res.end(
@@ -20,8 +33,12 @@ export const postTeamController = async (req, res) => {
       }),
     );
   } catch (error) {
-    res.statusCode = 400; 
-    res.end(error.message);
+    res.statusCode = 500;
+    res.end(
+      JSON.stringify({
+        message: error.message,
+      }),
+    );
   }
 };
 export const getTeamsController = async (req, res) => {
@@ -78,7 +95,19 @@ export const updateTeamController = async (req, res) => {
   try {
     const id = req.url.split("/")[2];
     const body = await bodyParser(req);
-    const result = await updateTeamService(id, body);
+    const validation = teamSchema.safeParse(body);
+
+    if (!validation.success) {
+      res.statusCode = 400;
+      return res.end(
+        JSON.stringify({
+          message: "Validation failed",
+          errors: validation.error.issues,
+        }),
+      );
+    }
+
+    const result = await updateTeamService(id, validation.data);
 
     res.statusCode = 200;
     res.end(
@@ -88,7 +117,11 @@ export const updateTeamController = async (req, res) => {
       }),
     );
   } catch (error) {
-    res.statusCode = 400;
-    res.end(error.message);
+    res.statusCode = 500;
+    res.end(
+      JSON.stringify({
+        message: error.message,
+      }),
+    );
   }
 };

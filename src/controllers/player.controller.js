@@ -7,11 +7,23 @@ import {
   postPlayerService,
   updatePlayerService,
 } from "../services/player.service.js";
+import { playerSchema } from "../validation/players.validation.js";
 
 export const postPlayerController = async (req, res) => {
   try {
     const body = await bodyParser(req);
-    const result = await postPlayerService(body);
+    const validation = playerSchema.safeParse(body);
+
+    if (!validation.success) {
+      res.statusCode = 400;
+      return res.end(
+        JSON.stringify({
+          message: "Validation failed",
+          errors: validation.error.issues,
+        }),
+      );
+    }
+    const result = await postPlayerService(validation.data);
 
     res.statusCode = 201;
     res.end(
@@ -21,24 +33,12 @@ export const postPlayerController = async (req, res) => {
       }),
     );
   } catch (error) {
-    res.statusCode = 400;
-    res.end(error.message);
-  }
-};
-export const getPlayersController = async (req, res) => {
-  try {
-    const result = await getPlayersService();
-
-    res.statusCode = 200;
+    res.statusCode = 500;
     res.end(
       JSON.stringify({
-        message: "Players received successfully",
-        data: result,
+        message: error.message,
       }),
     );
-  } catch (error) {
-    res.statusCode = 400;
-    res.end(error.message);
   }
 };
 export const getOnePlayerController = async (req, res) => {
@@ -79,7 +79,19 @@ export const updatePlayerController = async (req, res) => {
   try {
     const id = req.url.split("/")[2];
     const body = await bodyParser(req);
-    const result = await updatePlayerService(id, body);
+    const validation = playerSchema.safeParse(body);
+
+    if (!validation.success) {
+      res.statusCode = 400;
+      return res.end(
+        JSON.stringify({
+          message: "Validation failed",
+          errors: validation.error.issues,
+        }),
+      );
+    }
+
+    const result = await updatePlayerService(id, validation.data);
 
     res.statusCode = 200;
     res.end(
@@ -89,8 +101,12 @@ export const updatePlayerController = async (req, res) => {
       }),
     );
   } catch (error) {
-    res.statusCode = 400;
-    res.end(error.message);
+    res.statusCode = 500;
+    res.end(
+      JSON.stringify({
+        message: error.message,
+      }),
+    );
   }
 };
 export const getPlayersWithTeamController = async (req, res) => {
@@ -109,4 +125,3 @@ export const getPlayersWithTeamController = async (req, res) => {
     res.end(error.message);
   }
 };
-
