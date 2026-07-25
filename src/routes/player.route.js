@@ -2,6 +2,7 @@ import {
   deletePlayerController,
   getOnePlayerController,
   getPlayersWithTeamController,
+  getStatisticsController,
   postPlayerController,
   updatePlayerController,
 } from "../controllers/player.controller.js";
@@ -11,6 +12,8 @@ export const playerRouter = (req, res) => {
     return postPlayerController(req, res);
   } else if (req.method === "GET" && req.url === "/players/with-teams") {
     return getPlayersWithTeamController(req, res);
+  } else if (req.method === "GET" && req.url === "/players/statistics") {
+    return getStatisticsController(req, res);
   } else if (req.method === "GET" && req.url.startsWith("/players/")) {
     return getOnePlayerController(req, res);
   } else if (req.method === "DELETE" && req.url.startsWith("/players/")) {

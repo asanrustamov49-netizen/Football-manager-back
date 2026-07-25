@@ -4,6 +4,7 @@ import {
   getOnePlayerService,
   getPlayersService,
   getPlayersWithTeamService,
+  getStatisticsService,
   postPlayerService,
   updatePlayerService,
 } from "../services/player.service.js";
@@ -117,6 +118,22 @@ export const getPlayersWithTeamController = async (req, res) => {
     res.end(
       JSON.stringify({
         message: "Players with teams received",
+        data: result,
+      }),
+    );
+  } catch (error) {
+    res.statusCode = 400;
+    res.end(error.message);
+  }
+};
+export const getStatisticsController = async (req, res) => {
+  try {
+    const result = await getStatisticsService();
+
+    res.statusCode = 200;
+    res.end(
+      JSON.stringify({
+        message: "Statistics received",
         data: result,
       }),
     );

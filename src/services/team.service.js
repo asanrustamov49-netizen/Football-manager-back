@@ -19,6 +19,7 @@ export const getTeamsService = async () => {
     left join players
     on teams.id = players.team_id
     group by teams.id
+    order by teams.name asc
   `);
 
   return result.rows;

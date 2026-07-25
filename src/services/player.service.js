@@ -76,10 +76,54 @@ export const updatePlayerService = async (id, newBody) => {
 export const getPlayersWithTeamService = async () => {
   const result = await pool.query(
     `
-    select players.name, players.id, players.image, players.age, players.salary, players.team_id, teams.coach, teams.logo, teams.name as teamname, teams.country from players
+    select players.name, players.id, players.image, players.age, players.salary, players.team_id, teams.logo, teams.name as teamname, teams.country from players
     left join teams on teams.id = players.team_id
     `,
   );
 
   return result.rows;
+};
+export const getStatisticsService = async () => {
+  const totalPlayers = await pool.query(`
+    select count(*) as total_players
+    from players
+  `);
+
+  const totalTeams = await pool.query(`
+    select count(*) as total_teams
+    from teams
+  `);
+
+  const averageSalary = await pool.query(`
+    select avg(salary)::int as average_salary
+    from players
+  `);
+
+  const highestSalary = await pool.query(`
+    select max(salary) as highest_salary
+    from players
+  `);
+
+  const youngestPlayer = await pool.query(`
+    select name, age
+    from players
+    order by age asc
+    limit 1
+  `);
+
+  const oldestPlayer = await pool.query(`
+    select name, age
+    from players
+    order by age desc
+    limit 1
+  `);
+
+  return {
+    totalPlayers: totalPlayers.rows[0].total_players,
+    totalTeams: totalTeams.rows[0].total_teams,
+    averageSalary: averageSalary.rows[0].average_salary,
+    highestSalary: highestSalary.rows[0].highest_salary,
+    youngestPlayer: youngestPlayer.rows[0],
+    oldestPlayer: oldestPlayer.rows[0],
+  };
 };
