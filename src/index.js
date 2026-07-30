@@ -5,7 +5,10 @@ import { playerRouter } from "./routes/player.route.js";
 const server = http.createServer((req, res) => {
   console.log(`Method: ${req.method}, time: ${new Date()} ====> ${req.url}`);
 
-  res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000"); // Или '*' для всех
+  res.setHeader(
+    "Access-Control-Allow-Origin",
+    "https://football-manager-front-eta.vercel.app",
+  ); // Или '*' для всех
   res.setHeader(
     "Access-Control-Allow-Methods",
     "GET, POST, PATCH, DELETE, OPTIONS",
