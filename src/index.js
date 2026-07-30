@@ -1,4 +1,5 @@
 import http from "http";
+import "dotenv/config";
 import { teamRouter } from "./routes/team.route.js";
 import { playerRouter } from "./routes/player.route.js";
 

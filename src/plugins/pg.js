@@ -1,13 +1,14 @@
 import { Pool } from "pg";
 
 export const pool = new Pool({
-  database: "football-manager",
-  host: "localhost",
-  port: 5432,
-  user: "postgres",
-  password: "1011",
+  connectionString: process.env.DATABASE_URL,
+  ssl:
+    process.env.NODE_ENV === "production"
+      ? { rejectUnauthorized: false }
+      : false,
 });
 
-pool.connect().then(() => {
-  console.log("DB connected");
-});
+pool
+  .connect()
+  .then(() => console.log("DB connected"))
+  .catch((err) => console.error("DB connection error:", err));
